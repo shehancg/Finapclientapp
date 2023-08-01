@@ -3,6 +3,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/home/homePage";
+import StudentRegPage from "../pages/student/studentReg";
 import HomePageLayout from "../layouts/homePage/homePageLayout";
 
 const AppRouter: React.FC = () => {
@@ -14,6 +15,14 @@ const AppRouter: React.FC = () => {
             element={
               <HomePageLayout>
                 <HomePage />
+              </HomePageLayout>
+            }
+          />
+          <Route
+            path="/page1"
+            element={
+              <HomePageLayout>
+                <StudentRegPage />
               </HomePageLayout>
             }
           />
