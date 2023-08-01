@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css"; // Import your custom Sass file
+import "./App.sass"; // Import your custom Sass file
 import Routes from "./routes/router.config";
 import AppRouter from "./routes/router.config";
 
