@@ -10,6 +10,8 @@ import CommonPage from "../pages/common/common";
 //component imports
 import StudentRegistration from "../components/student/studentRegistration";
 import Classrooms from "../components/classroom/addClass";
+import TeacherRegistration from "../components/teachers/teacherRegistration";
+import SubjectRegistration from "../components/subjects/addSubjects";
 
 import HomePageLayout from "../layouts/homePage/homePageLayout";
 
@@ -41,6 +43,26 @@ const AppRouter: React.FC = () => {
               <HomePageLayout>
                 <CommonPage>
                   <Classrooms/>
+                </CommonPage>
+              </HomePageLayout>
+            }
+          />
+          <Route
+            path="/page3"
+            element={
+              <HomePageLayout>
+                <CommonPage>
+                  <TeacherRegistration/>
+                </CommonPage>
+              </HomePageLayout>
+            }
+          />
+          <Route
+            path="/page4"
+            element={
+              <HomePageLayout>
+                <CommonPage>
+                  <SubjectRegistration/>
                 </CommonPage>
               </HomePageLayout>
             }

@@ -18,27 +18,27 @@ const HomePage: React.FC = () => {
     {
       title: "Teacher Registration",
       imageSrc: "https://via.placeholder.com/150",
-      linkTo: "/page1", // Define the target URL for Card 1
+      linkTo: "/page3", // Define the target URL for Card 1
     },
     {
       title: "Add Subject",
       imageSrc: "https://via.placeholder.com/150",
-      linkTo: "/page2", // Define the target URL for Card 2
+      linkTo: "/page4", // Define the target URL for Card 2
     },
     {
       title: "Allocate Subject",
       imageSrc: "https://via.placeholder.com/150",
-      linkTo: "/page1", // Define the target URL for Card 1
+      linkTo: "/page5", // Define the target URL for Card 1
     },
     {
       title: "Allocate Classroom",
       imageSrc: "https://via.placeholder.com/150",
-      linkTo: "/page2", // Define the target URL for Card 2
+      linkTo: "/page6", // Define the target URL for Card 2
     },
     {
       title: "Student Report",
       imageSrc: "https://via.placeholder.com/150",
-      linkTo: "/page2", // Define the target URL for Card 2
+      linkTo: "/page7", // Define the target URL for Card 2
     },
     // Add more card data with target URLs here
   ];
