@@ -2,8 +2,15 @@
 
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+//page imports
 import HomePage from "../pages/home/homePage";
-import StudentRegPage from "../pages/student/studentReg";
+import CommonPage from "../pages/common/common";
+
+//component imports
+import StudentRegistration from "../components/student/studentRegistration";
+import Classrooms from "../components/classroom/addClass";
+
 import HomePageLayout from "../layouts/homePage/homePageLayout";
 
 const AppRouter: React.FC = () => {
@@ -22,7 +29,19 @@ const AppRouter: React.FC = () => {
             path="/page1"
             element={
               <HomePageLayout>
-                <StudentRegPage />
+                <CommonPage>
+                  <StudentRegistration/>
+                </CommonPage>
+              </HomePageLayout>
+            }
+          />
+          <Route
+            path="/page2"
+            element={
+              <HomePageLayout>
+                <CommonPage>
+                  <Classrooms/>
+                </CommonPage>
               </HomePageLayout>
             }
           />

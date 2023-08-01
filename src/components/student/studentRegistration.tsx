@@ -22,6 +22,21 @@ const StudentRegistration: React.FC = () => {
   const [dateOfBirthError, setDateOfBirthError] = useState("");
   const [classroomError, setClassroomError] = useState("");
 
+  // Function to calculate age based on date of birth
+  const calculateAge = (dateOfBirth: string): number => {
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < dob.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
+
   // Function to validate the form before submission
   const validateForm = () => {
     let isValid = true;
@@ -169,6 +184,16 @@ const StudentRegistration: React.FC = () => {
             onChange={(e) => setDateOfBirth(e.target.value)}
           />
           {dateOfBirthError && <div className="error">{dateOfBirthError}</div>}
+        </FormGroup>
+        <FormGroup>
+          <Label for="age">Age *</Label>
+          <Input
+            type="text"
+            name="age"
+            id="age"
+            value={dateOfBirth ? calculateAge(dateOfBirth) : ""}
+            disabled
+          />
         </FormGroup>
         <FormGroup>
           <Label for="classroom">Classroom *</Label>

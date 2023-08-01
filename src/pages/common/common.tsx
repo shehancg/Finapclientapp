@@ -1,22 +1,26 @@
 // pages/HomePage.tsx
 
-import React from "react";
+import React, { ReactNode } from "react";
 import CustomNavbar from "../../components/navbar/navbar";
 import StudentRegistration from "../../components/student/studentRegistration";
 import HomePageLayout from "../../layouts/homePage/homePageLayout"; 
 
-const StudentRegPage: React.FC = () => {
+interface CommonPageLayoutProps {
+    children: ReactNode;
+  }
+
+const CommonPage: React.FC<CommonPageLayoutProps> = ({children}) => {
   return (
     <HomePageLayout>
       <CustomNavbar />
       <div className="container">
         <div className="d-flex flex-column align-items-center">
           {/* Other content */}
-          <StudentRegistration />
+          {children}
         </div>
       </div>
     </HomePageLayout>
   );
 };
 
-export default StudentRegPage;
+export default CommonPage;
