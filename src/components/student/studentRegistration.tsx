@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { FormGroup, Label, Input, Form, Button } from "reactstrap";
+import api from "../../api";
+
+interface Classroom {
+  classroomName: string;
+}
 
 const StudentRegistration: React.FC = () => {
-  const dispatch = useDispatch();
-
-  // State variables to store student details and error messages
+  const [classrooms, setClassrooms] = useState<Classroom[]>([]); // State variable to store classrooms
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [contactPerson, setContactPerson] = useState("");
@@ -13,7 +15,6 @@ const StudentRegistration: React.FC = () => {
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [classroom, setClassroom] = useState("");
-
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
   const [contactPersonError, setContactPersonError] = useState("");
@@ -35,6 +36,20 @@ const StudentRegistration: React.FC = () => {
       age--;
     }
     return age;
+  };
+
+  // Fetch classrooms from the API using useEffect
+  useEffect(() => {
+    fetchClassrooms();
+  }, []);
+
+  const fetchClassrooms = async () => {
+    try {
+      const response = await api.get("/api/classrooms");
+      setClassrooms(response.data); // Store the fetched classrooms in the state
+    } catch (error) {
+      console.error("Error fetching classrooms:", error);
+    }
   };
 
   // Function to validate the form before submission
@@ -205,9 +220,11 @@ const StudentRegistration: React.FC = () => {
             onChange={(e) => setClassroom(e.target.value)}
           >
             <option value="">Select Classroom</option>
-            <option value="classroom1">Classroom 1</option>
-            <option value="classroom2">Classroom 2</option>
-            {/* Add more options based on your data */}
+            {classrooms.map((classroomOption) => (
+              <option key={classroomOption.classroomName} value={classroomOption.classroomName}>
+                {classroomOption.classroomName}
+              </option>
+            ))}
           </Input>
           {classroomError && <div className="error">{classroomError}</div>}
         </FormGroup>
