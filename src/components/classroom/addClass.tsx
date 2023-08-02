@@ -1,6 +1,8 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FormGroup, Label, Input, Form, Button } from "reactstrap";
+import api from "../../api"; // Import the Axios instance from api.ts
 
 interface Classroom {
   classroomName: string;
@@ -30,7 +32,7 @@ const Classrooms: React.FC = () => {
   };
 
   // Function to handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Check if the form is valid before submitting
@@ -39,8 +41,23 @@ const Classrooms: React.FC = () => {
       const newClassroom: Classroom = {
         classroomName,
       };
-      // Example: dispatch(addClassroom(newClassroom));
-      // Implement the addClassroom action based on your Redux setup
+      try {
+        // Send the data to the API
+        const response = await api.post("/api/classrooms", newClassroom);
+
+        // Handle the response from the API (if needed)
+        console.log("Classroom added successfully:", response.data);
+
+        // Clear the form after successful submission (if needed)
+        setClassroomName("");
+
+        // You can also dispatch an action to update the Redux store with the new classroom data
+        // Example: dispatch(addClassroomToStore(response.data));
+        // Implement the addClassroomToStore action based on your Redux setup
+      } catch (error) {
+        // Handle any errors that occurred during the API request
+        console.error("Error adding classroom:", error);
+      }
     }
   };
 
