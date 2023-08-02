@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { FormGroup, Label, Input, Form, Button } from "reactstrap";
+import api from "../../api";
 
 const TeacherRegistration: React.FC = () => {
   // State variables to store teacher details and error messages
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [contactNo, setContactNo] = useState("");
-  const [email, setEmail] = useState("");
+  const [emailAddress, setEmail] = useState("");
 
   const [firstNameError, setFirstNameError] = useState("");
   const [contactNoError, setContactNoError] = useState("");
@@ -34,10 +35,10 @@ const TeacherRegistration: React.FC = () => {
 
     // Validate Email
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim()) {
+    if (!emailAddress.trim()) {
       setEmailError("Email Address is required");
       isValid = false;
-    } else if (!emailPattern.test(email)) {
+    } else if (!emailPattern.test(emailAddress)) {
       setEmailError("Invalid Email Address");
       isValid = false;
     } else {
@@ -48,12 +49,42 @@ const TeacherRegistration: React.FC = () => {
   };
 
   // Function to handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Check if the form is valid before submitting
     if (validateForm()) {
       // Perform further actions like saving teacher details to the database
+      const teacherData = {
+        firstName,
+        lastName,
+        contactNo,
+        emailAddress,
+      };
+
+      try {
+        // Send the teacher data to the API using axios
+        const response = await api.post("/api/Teacher", teacherData);
+
+        // Handle the API response here if needed
+        console.log("Teacher added:", response.data);
+
+        // Clear the form fields after successful submission
+        setFirstName("");
+        setLastName("");
+        setContactNo("");
+        setEmail("");
+
+        // Clear error messages
+        setFirstNameError("");
+        setFirstNameError("");
+        setContactNoError("");
+        setEmailError("");
+
+      } catch (error:any) {
+        // Handle any errors that occurred during the API call
+        console.error("Error adding teacher:", error.response.data);
+      }
     }
   };
 
@@ -99,7 +130,7 @@ const TeacherRegistration: React.FC = () => {
             type="email"
             name="email"
             id="email"
-            value={email}
+            value={emailAddress}
             onChange={(e) => setEmail(e.target.value)}
           />
           {emailError && <div className="error">{emailError}</div>}

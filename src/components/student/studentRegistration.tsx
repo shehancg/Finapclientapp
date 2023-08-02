@@ -12,9 +12,11 @@ const StudentRegistration: React.FC = () => {
   const [lastName, setLastName] = useState("");
   const [contactPerson, setContactPerson] = useState("");
   const [contactNo, setContactNo] = useState("");
-  const [email, setEmail] = useState("");
+  const [emailAddress, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [classroom, setClassroom] = useState("");
+
+
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
   const [contactPersonError, setContactPersonError] = useState("");
@@ -90,10 +92,10 @@ const StudentRegistration: React.FC = () => {
 
     // Validate Email
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim()) {
+    if (!emailAddress.trim()) {
       setEmailError("Email Address is required");
       isValid = false;
-    } else if (!emailPattern.test(email)) {
+    } else if (!emailPattern.test(emailAddress)) {
       setEmailError("Invalid Email Address");
       isValid = false;
     } else {
@@ -120,13 +122,55 @@ const StudentRegistration: React.FC = () => {
   };
 
   // Function to handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Check if the form is valid before submitting
     if (validateForm()) {
-      // Dispatch an action to add student data to the Redux store
-      // Example: dispatch(addStudent(firstName, lastName, ...));
+      try {
+        // Create a new student object with the form data
+        const newStudent = {
+          firstName,
+          lastName,
+          contactPerson,
+          contactNo,
+          emailAddress,
+          dateOfBirth,
+          classroom,
+        };
+
+        // Send the newStudent object to the API using the POST method
+        const response = await api.post("/api/Student", newStudent);
+
+        // Assuming the API returns the created student object, you can access it from the response data
+        //const createdStudent = response.data;
+
+        // Handle the API response here if needed
+        console.log("Student added:", response.data);
+
+        // Optionally, you can do something with the createdStudent, like displaying a success message or navigating to another page.
+
+        // Clear the form fields after successful submission
+        setFirstName("");
+        setLastName("");
+        setContactPerson("");
+        setContactNo("");
+        setEmail("");
+        setDateOfBirth("");
+        setClassroom("");
+
+        // Reset any error messages
+        setFirstNameError("");
+        setLastNameError("");
+        setContactPersonError("");
+        setContactNoError("");
+        setEmailError("");
+        setDateOfBirthError("");
+        setClassroomError("");
+      } catch (error:any) {
+        console.error("Error adding student:", error.response.data);
+        // Handle any errors that occurred during the API call, e.g., display an error message to the user.
+      }
     }
   };
 
@@ -184,7 +228,7 @@ const StudentRegistration: React.FC = () => {
             type="email"
             name="email"
             id="email"
-            value={email}
+            value={emailAddress}
             onChange={(e) => setEmail(e.target.value)}
           />
           {emailError && <div className="error">{emailError}</div>}
