@@ -51,6 +51,8 @@ const Classrooms: React.FC = () => {
         // Clear the form after successful submission (if needed)
         setClassroomName("");
 
+        setClassroomNameError("")
+
         // You can also dispatch an action to update the Redux store with the new classroom data
         // Example: dispatch(addClassroomToStore(response.data));
         // Implement the addClassroomToStore action based on your Redux setup

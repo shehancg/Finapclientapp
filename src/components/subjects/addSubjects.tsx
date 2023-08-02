@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { FormGroup, Label, Input, Form, Button } from "reactstrap";
+import api from "../../api";
+
+interface Subject{
+  subjectName: string;
+}
 
 const SubjectRegistration: React.FC = () => {
   // State variables to store subject details and error messages
@@ -23,12 +28,30 @@ const SubjectRegistration: React.FC = () => {
   };
 
   // Function to handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Check if the form is valid before submitting
     if (validateForm()) {
-      // Perform further actions like saving subject details to the database
+      // Dispatch an acyion f needed to add subject to redux store
+      const newSubject: Subject = {
+          subjectName,
+      };
+      try{
+        // send data to the api
+        const response = await api.post("api/Subject", newSubject);
+
+        // Response from the api
+        console.log("Subject added successfully:", response.data);
+
+        // Clear the form after successful submission (if needed)
+        setSubjectName("");
+
+        setSubjectNameError("");
+
+      } catch(error){
+        console.error("Error adding subjects:",error);
+      }
     }
   };
 
