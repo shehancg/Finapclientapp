@@ -3,6 +3,7 @@ import { FormGroup, Label, Input, Form, Button } from "reactstrap";
 import api from "../../api";
 
 interface Classroom {
+  classroomId: number;
   classroomName: string;
 }
 
@@ -15,7 +16,8 @@ const StudentRegistration: React.FC = () => {
   const [emailAddress, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [classroom, setClassroom] = useState("");
-
+  // New state variable to store age
+  const [age, setAge] = useState<number | undefined>(undefined);
 
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
@@ -125,6 +127,9 @@ const StudentRegistration: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Calculate age based on date of birth
+    const calculatedAge = dateOfBirth ? calculateAge(dateOfBirth) : undefined;
+
     // Check if the form is valid before submitting
     if (validateForm()) {
       try {
@@ -136,7 +141,8 @@ const StudentRegistration: React.FC = () => {
           contactNo,
           emailAddress,
           dateOfBirth,
-          classroom,
+          age: calculatedAge,
+          classroomId: parseInt(classroom),
         };
 
         // Send the newStudent object to the API using the POST method
@@ -158,6 +164,7 @@ const StudentRegistration: React.FC = () => {
         setEmail("");
         setDateOfBirth("");
         setClassroom("");
+        setAge(undefined);
 
         // Reset any error messages
         setFirstNameError("");
@@ -265,7 +272,7 @@ const StudentRegistration: React.FC = () => {
           >
             <option value="">Select Classroom</option>
             {classrooms.map((classroomOption) => (
-              <option key={classroomOption.classroomName} value={classroomOption.classroomName}>
+              <option key={classroomOption.classroomId} value={classroomOption.classroomId}>
                 {classroomOption.classroomName}
               </option>
             ))}
