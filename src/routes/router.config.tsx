@@ -14,6 +14,7 @@ import TeacherRegistration from "../components/teachers/teacherRegistration";
 import SubjectRegistration from "../components/subjects/addSubjects";
 
 import HomePageLayout from "../layouts/homePage/homePageLayout";
+import AllocateSubjects from "../components/allocateSubject/allocateSubject";
 
 const AppRouter: React.FC = () => {
     return (
@@ -67,7 +68,16 @@ const AppRouter: React.FC = () => {
               </HomePageLayout>
             }
           />
-          {/* Add more routes here */}
+          <Route
+            path="/page5"
+            element={
+              <HomePageLayout>
+                <CommonPage>
+                  <AllocateSubjects/>
+                </CommonPage>
+              </HomePageLayout>
+            }
+          />
         </Routes>
       </Router>
     );
