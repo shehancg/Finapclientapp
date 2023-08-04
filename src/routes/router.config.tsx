@@ -15,6 +15,7 @@ import SubjectRegistration from "../components/subjects/addSubjects";
 
 import HomePageLayout from "../layouts/homePage/homePageLayout";
 import AllocateSubjects from "../components/allocateSubject/allocateSubject";
+import AllocateClassrooms from "../components/allocateClassroom/allocateClassroom";
 
 const AppRouter: React.FC = () => {
     return (
@@ -74,6 +75,16 @@ const AppRouter: React.FC = () => {
               <HomePageLayout>
                 <CommonPage>
                   <AllocateSubjects/>
+                </CommonPage>
+              </HomePageLayout>
+            }
+          />
+          <Route
+            path="/page6"
+            element={
+              <HomePageLayout>
+                <CommonPage>
+                  <AllocateClassrooms/>
                 </CommonPage>
               </HomePageLayout>
             }

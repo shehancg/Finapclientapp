@@ -62,16 +62,24 @@ const AllocateSubjects: React.FC = () => {
 
   // Function to handle teacher selection from the drop-down
   const handleTeacherSelection = async (selectedTeacherId: string) => {
-    try {
-      // Fetch the teacher's subjects from the API based on the selected teacher ID
-      const response = await api.get(`/api/AllocateSubject/teacher/${selectedTeacherId}`);
-      const subjects = response.data.map((subject: any) => subject.subjectName);
+    setTeacherId(selectedTeacherId);
+    fetchAllocatedSubjectsForTeacher(selectedTeacherId); // Fetch allocated subjects for the selected teacher
+  };
 
-      // Update the selectedTeacherSubjects state with the teacher's subjects
-      setSelectedTeacherSubjects(subjects);
+  // Function to fetch allocated subjects for the selected teacher
+  const fetchAllocatedSubjectsForTeacher = async (teacherId: string) => {
+    try {
+      const response = await api.get(`/api/AllocateSubject/teacher/${teacherId}`);
+      setSelectedTeacherSubjects(response.data.map((subject: any) => subject.subjectName));
     } catch (error) {
       console.error("Error fetching teacher's subjects:", error);
     }
+  };
+
+  // Function to get the subject name from subjectId
+  const getSubjectNameById = (subjectId: string) => {
+    const subject = subjects.find((subject) => subject.subjectId === Number(subjectId));
+    return subject ? subject.subjectName : "";
   };
 
   // Function to handle form submission
@@ -97,7 +105,9 @@ const AllocateSubjects: React.FC = () => {
         // Update the allocatedSubjects state with the new allocation
         setAllocatedSubjects([...allocatedSubjects, newAllocation]);
 
-        // Clear the form fields after allocation
+        // Refresh the table with the updated list of allocated subjects
+        fetchAllocatedSubjectsForTeacher(teacherId);
+
         setTeacherId("");
         setSubjectId("");
       } catch (error) {
@@ -109,21 +119,21 @@ const AllocateSubjects: React.FC = () => {
     }
   };
 
-  // Function to handle subject allocation deletion
-  const handleDelete = async (allocationId: number) => {
-    try {
-      // Make an API call to delete the allocation
-      await api.delete(`/api/AllocateSubjects/${allocationId}`);
+// Function to handle subject allocation deletion
+const handleDelete = async (allocateSubjectId: number) => {
+  try {
+    // Make an API call to delete the allocation
+    await api.delete(`/api/AllocateSubject/${allocateSubjectId}`);
 
-      // Update the allocatedSubjects state after deletion
-      const updatedAllocations = allocatedSubjects.filter(
-        (allocation) => allocation.allocateSubjectId !== allocationId
-      );
-      setAllocatedSubjects(updatedAllocations);
-    } catch (error) {
-      console.error("Error deleting allocation:", error);
-    }
-  };
+    // Update the allocatedSubjects state after deletion
+    const updatedAllocations = allocatedSubjects.filter(
+      (allocation) => allocation.allocateSubjectId !== allocateSubjectId
+    );
+    setAllocatedSubjects(updatedAllocations);
+  } catch (error) {
+    console.error("Error deleting allocation:", error);
+  }
+};
 
   return (
     <div>
@@ -187,9 +197,7 @@ const AllocateSubjects: React.FC = () => {
                 <td>
                   <Button
                     color="danger"
-                    // onClick={() =>
-                    //   handleDelete(allocation.allocateSubjectId)
-                    // }
+                    onClick={() => handleDelete(allocatedSubjects[index]?.allocateSubjectId)}
                   >
                     Delete
                   </Button>
