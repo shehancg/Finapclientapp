@@ -10,20 +10,20 @@ interface Allocation {
 }
 
 interface Teacher {
-    teacherID: number;
-    firstName: string;
-    lastName: string;
-    contactNo: string;
-    emailAddress: string;
-    allocatedSubjects: any[]; // Replace 'any[]' with the appropriate type for allocatedSubjects
-    allocateClassrooms: any[]; // Replace 'any[]' with the appropriate type for allocateClassrooms
-  }
+  teacherID: number;
+  firstName: string;
+  lastName: string;
+  contactNo: string;
+  emailAddress: string;
+  allocatedSubjects: any[]; // Replace 'any[]' with the appropriate type for allocatedSubjects
+  allocateClassrooms: any[]; // Replace 'any[]' with the appropriate type for allocateClassrooms
+}
 
-  interface Subject {
-    subjectId: number;
-    subjectName: string;
-    allocations: any[]; // Replace 'any[]' with the appropriate type for allocations
-  }
+interface Subject {
+  subjectId: number;
+  subjectName: string;
+  allocations: any[]; // Replace 'any[]' with the appropriate type for allocations
+}
 
 const AllocateSubjects: React.FC = () => {
   // State variables to store allocation details
@@ -60,30 +60,56 @@ const AllocateSubjects: React.FC = () => {
   };
 
   // Function to handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Allocate subject to teacher
-    const newAllocation = {
-      allocateSubjectId: Date.now(), // You can use a proper ID generation mechanism here
-      teacherId,
-      subjectId,
-    };
+    // Check if both teacherId and subjectId are selected
+    if (teacherId && subjectId) {
+      try {
+        // Allocate subject to teacher
+        const newAllocation: Allocation = {
+          allocateSubjectId: Date.now(), // You can use a proper ID generation mechanism here
+          teacherId: teacherId,
+          subjectId: subjectId,
+        };
 
-    setAllocatedSubjects([...allocatedSubjects, newAllocation]);
+        // Make an API call to save the allocation
+        await api.post("/api/AllocateSubject", {
+          teacherId: Number(newAllocation.teacherId),
+          subjectId: Number(newAllocation.subjectId),
+        });
 
-    // Clear the form fields after allocation
-    setTeacherId("");
-    setSubjectId("");
+        // Update the allocatedSubjects state with the new allocation
+        setAllocatedSubjects([...allocatedSubjects, newAllocation]);
+
+        console.log("Allocated Subjects after update:", allocatedSubjects);
+
+        // Clear the form fields after allocation
+        setTeacherId("");
+        setSubjectId("");
+      } catch (error) {
+        console.error("Error allocating subject:", error);
+      }
+    } else {
+      // Display an error message if both teacher and subject are not selected
+      alert("Please select both teacher and subject to allocate.");
+    }
   };
 
   // Function to handle subject allocation deletion
-  const handleDelete = (allocationId: number) => {
-    const updatedAllocations = allocatedSubjects.filter(
-      (allocation) => allocation.allocateSubjectId !== allocationId
-    );
+  const handleDelete = async (allocationId: number) => {
+    try {
+      // Make an API call to delete the allocation
+      await api.delete(`/api/AllocateSubjects/${allocationId}`);
 
-    setAllocatedSubjects(updatedAllocations);
+      // Update the allocatedSubjects state after deletion
+      const updatedAllocations = allocatedSubjects.filter(
+        (allocation) => allocation.allocateSubjectId !== allocationId
+      );
+      setAllocatedSubjects(updatedAllocations);
+    } catch (error) {
+      console.error("Error deleting allocation:", error);
+    }
   };
 
   return (
@@ -139,7 +165,7 @@ const AllocateSubjects: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {allocatedSubjects.map((allocation) => (
+            {allocatedSubjects.map((allocation, index) => (
               <tr key={allocation.allocateSubjectId}>
                 <td>{allocation.teacherId}</td>
                 <td>{allocation.subjectId}</td>
