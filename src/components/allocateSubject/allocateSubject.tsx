@@ -32,6 +32,7 @@ const AllocateSubjects: React.FC = () => {
   const [allocatedSubjects, setAllocatedSubjects] = useState<Allocation[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [selectedTeacherSubjects, setSelectedTeacherSubjects] = useState<string[]>([]);
 
   // Function to fetch teachers and subjects from APIs
   useEffect(() => {
@@ -59,6 +60,20 @@ const AllocateSubjects: React.FC = () => {
     }
   };
 
+  // Function to handle teacher selection from the drop-down
+  const handleTeacherSelection = async (selectedTeacherId: string) => {
+    try {
+      // Fetch the teacher's subjects from the API based on the selected teacher ID
+      const response = await api.get(`/api/AllocateSubject/teacher/${selectedTeacherId}`);
+      const subjects = response.data.map((subject: any) => subject.subjectName);
+
+      // Update the selectedTeacherSubjects state with the teacher's subjects
+      setSelectedTeacherSubjects(subjects);
+    } catch (error) {
+      console.error("Error fetching teacher's subjects:", error);
+    }
+  };
+
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -81,8 +96,6 @@ const AllocateSubjects: React.FC = () => {
 
         // Update the allocatedSubjects state with the new allocation
         setAllocatedSubjects([...allocatedSubjects, newAllocation]);
-
-        console.log("Allocated Subjects after update:", allocatedSubjects);
 
         // Clear the form fields after allocation
         setTeacherId("");
@@ -123,7 +136,10 @@ const AllocateSubjects: React.FC = () => {
             name="teacher"
             id="teacher"
             value={teacherId}
-            onChange={(e) => setTeacherId(e.target.value)}
+            onChange={(e) => {
+              setTeacherId(e.target.value);
+              handleTeacherSelection(e.target.value); // Call the handler when teacher is selected
+            }}
           >
             <option value="">Select Teacher</option>
             {/* Populate options with teachers from the API */}
@@ -165,16 +181,15 @@ const AllocateSubjects: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {allocatedSubjects.map((allocation, index) => (
-              <tr key={allocation.allocateSubjectId}>
-                <td>{allocation.teacherId}</td>
-                <td>{allocation.subjectId}</td>
+            {selectedTeacherSubjects.map((subject, index) => (
+              <tr key={index}>
+                <td>{subject}</td>
                 <td>
                   <Button
                     color="danger"
-                    onClick={() =>
-                      handleDelete(allocation.allocateSubjectId)
-                    }
+                    // onClick={() =>
+                    //   handleDelete(allocation.allocateSubjectId)
+                    // }
                   >
                     Delete
                   </Button>
