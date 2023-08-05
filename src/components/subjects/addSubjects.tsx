@@ -44,7 +44,6 @@ const SubjectRegistration: React.FC = () => {
         // Response from the api
         console.log("Subject added successfully:", response.data);
 
-        // Clear the form after successful submission (if needed)
         setSubjectName("");
 
         setSubjectNameError("");

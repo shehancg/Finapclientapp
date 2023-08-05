@@ -53,11 +53,9 @@ const Classrooms: React.FC = () => {
 
         setClassroomNameError("")
 
-        // You can also dispatch an action to update the Redux store with the new classroom data
-        // Example: dispatch(addClassroomToStore(response.data));
-        // Implement the addClassroomToStore action based on your Redux setup
+        
       } catch (error) {
-        // Handle any errors that occurred during the API request
+        
         console.error("Error adding classroom:", error);
       }
     }

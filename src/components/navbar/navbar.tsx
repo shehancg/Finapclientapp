@@ -10,7 +10,6 @@ const CustomNavbar = () => {
         <NavItem>
           <NavLink href="/">Home</NavLink>
         </NavItem>
-        {/* Add more NavItems here for other links */}
       </Nav>
     </Navbar>
   );

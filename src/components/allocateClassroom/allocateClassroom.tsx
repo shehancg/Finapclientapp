@@ -90,7 +90,7 @@ const AllocateClassrooms: React.FC = () => {
       try {
         // Allocate classroom to teacher
         const newAllocation: AllocateClassroom = {
-          allocateClassroomId: Date.now(), // You can use a proper ID generation mechanism here
+          allocateClassroomId: Date.now(), 
           teacherId: Number(teacherId),
           classroomId: Number(classroomId),
         };

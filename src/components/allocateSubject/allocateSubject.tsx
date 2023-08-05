@@ -91,7 +91,7 @@ const AllocateSubjects: React.FC = () => {
       try {
         // Allocate subject to teacher
         const newAllocation: Allocation = {
-          allocateSubjectId: Date.now(), // You can use a proper ID generation mechanism here
+          allocateSubjectId: Date.now(), 
           teacherId: teacherId,
           subjectId: subjectId,
         };
@@ -170,7 +170,7 @@ const handleDelete = async (allocateSubjectId: number) => {
             onChange={(e) => setSubjectId(e.target.value)}
           >
             <option value="">Select Subject</option>
-            {/* Populate options with subjects from the API */}
+            
             {subjects.map((subjectOption) => (
               <option key={subjectOption.subjectId} value={subjectOption.subjectId}>
                 {subjectOption.subjectName}

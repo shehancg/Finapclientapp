@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 interface CustomCardProps {
   title: string;
   imageSrc: string;
-  linkTo: string; // Add a new prop to store the target URL
+  linkTo: string; 
 }
 
 const CustomCard: React.FC<CustomCardProps> = ({ title, imageSrc, linkTo }) => {

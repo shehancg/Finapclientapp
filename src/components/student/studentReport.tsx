@@ -75,7 +75,7 @@ const StudentReport: React.FC = () => {
             onChange={(e) => handleStudentSelection(Number(e.target.value))}
           >
             <option value="">Select Student</option>
-            {/* Populate options with students from the API */}
+            
             {students.map((student) => (
               <option key={student.studentID} value={student.studentID}>
                 {student.firstName}

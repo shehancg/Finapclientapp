@@ -154,8 +154,6 @@ const StudentRegistration: React.FC = () => {
         // Handle the API response here if needed
         console.log("Student added:", response.data);
 
-        // Optionally, you can do something with the createdStudent, like displaying a success message or navigating to another page.
-
         // Clear the form fields after successful submission
         setFirstName("");
         setLastName("");
@@ -176,7 +174,6 @@ const StudentRegistration: React.FC = () => {
         setClassroomError("");
       } catch (error:any) {
         console.error("Error adding student:", error.response.data);
-        // Handle any errors that occurred during the API call, e.g., display an error message to the user.
       }
     }
   };
