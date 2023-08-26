@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FormGroup, Label, Input, Form, Button } from "reactstrap";
 import api from "../../api";
+import Swal from "sweetalert2";
 
 interface Classroom {
   classroomId: number;
@@ -8,7 +9,7 @@ interface Classroom {
 }
 
 const StudentRegistration: React.FC = () => {
-  const [classrooms, setClassrooms] = useState<Classroom[]>([]); // State variable to store classrooms
+  const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [contactPerson, setContactPerson] = useState("");
@@ -16,7 +17,6 @@ const StudentRegistration: React.FC = () => {
   const [emailAddress, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [classroom, setClassroom] = useState("");
-  // New state variable to store age
   const [age, setAge] = useState<number | undefined>(undefined);
 
   const [firstNameError, setFirstNameError] = useState("");
@@ -27,22 +27,6 @@ const StudentRegistration: React.FC = () => {
   const [dateOfBirthError, setDateOfBirthError] = useState("");
   const [classroomError, setClassroomError] = useState("");
 
-  // Function to calculate age based on date of birth
-  const calculateAge = (dateOfBirth: string): number => {
-    const dob = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const monthDiff = today.getMonth() - dob.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < dob.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  };
-
-  // Fetch classrooms from the API using useEffect
   useEffect(() => {
     fetchClassrooms();
   }, []);
@@ -50,17 +34,26 @@ const StudentRegistration: React.FC = () => {
   const fetchClassrooms = async () => {
     try {
       const response = await api.get("/api/classrooms");
-      setClassrooms(response.data); // Store the fetched classrooms in the state
+      setClassrooms(response.data);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
     }
   };
 
-  // Function to validate the form before submission
+  const calculateAge = (dateOfBirth: string): number => {
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const validateForm = () => {
     let isValid = true;
 
-    // Validate First Name
     if (!firstName.trim()) {
       setFirstNameError("First Name is required");
       isValid = false;
@@ -68,7 +61,6 @@ const StudentRegistration: React.FC = () => {
       setFirstNameError("");
     }
 
-    // Validate Last Name
     if (!lastName.trim()) {
       setLastNameError("Last Name is required");
       isValid = false;
@@ -76,7 +68,6 @@ const StudentRegistration: React.FC = () => {
       setLastNameError("");
     }
 
-    // Validate Contact Person
     if (!contactPerson.trim()) {
       setContactPersonError("Contact Person is required");
       isValid = false;
@@ -84,15 +75,18 @@ const StudentRegistration: React.FC = () => {
       setContactPersonError("");
     }
 
-    // Validate Contact No
     if (!contactNo.trim()) {
       setContactNoError("Contact No is required");
+      isValid = false;
+    } else if (!/^\d{10,}$/.test(contactNo)) {
+      setContactNoError(
+        "Contact No should be numeric and contain at least 10 digits"
+      );
       isValid = false;
     } else {
       setContactNoError("");
     }
 
-    // Validate Email
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailAddress.trim()) {
       setEmailError("Email Address is required");
@@ -104,15 +98,20 @@ const StudentRegistration: React.FC = () => {
       setEmailError("");
     }
 
-    // Validate Date of Birth
     if (!dateOfBirth.trim()) {
       setDateOfBirthError("Date of Birth is required");
       isValid = false;
     } else {
-      setDateOfBirthError("");
+      const dob = new Date(dateOfBirth);
+      const today = new Date();
+      if (dob >= today) {
+        setDateOfBirthError("Date of Birth cannot be in the future");
+        isValid = false;
+      } else {
+        setDateOfBirthError("");
+      }
     }
 
-    // Validate Classroom
     if (!classroom.trim()) {
       setClassroomError("Classroom is required");
       isValid = false;
@@ -123,17 +122,13 @@ const StudentRegistration: React.FC = () => {
     return isValid;
   };
 
-  // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Calculate age based on date of birth
-    const calculatedAge = dateOfBirth ? calculateAge(dateOfBirth) : undefined;
+    const calculatedAge = calculateAge(dateOfBirth);
 
-    // Check if the form is valid before submitting
     if (validateForm()) {
       try {
-        // Create a new student object with the form data
         const newStudent = {
           firstName,
           lastName,
@@ -145,16 +140,17 @@ const StudentRegistration: React.FC = () => {
           classroomId: parseInt(classroom),
         };
 
-        // Send the newStudent object to the API using the POST method
         const response = await api.post("/api/Student", newStudent);
 
-        // Assuming the API returns the created student object, you can access it from the response data
-        //const createdStudent = response.data;
-
-        // Handle the API response here if needed
         console.log("Student added:", response.data);
+        
+        // Show a success SweetAlert notification
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Student registered successfully!",
+        });
 
-        // Clear the form fields after successful submission
         setFirstName("");
         setLastName("");
         setContactPerson("");
@@ -164,7 +160,6 @@ const StudentRegistration: React.FC = () => {
         setClassroom("");
         setAge(undefined);
 
-        // Reset any error messages
         setFirstNameError("");
         setLastNameError("");
         setContactPersonError("");
@@ -172,10 +167,29 @@ const StudentRegistration: React.FC = () => {
         setEmailError("");
         setDateOfBirthError("");
         setClassroomError("");
-      } catch (error:any) {
+      } catch (error: any) {
         console.error("Error adding student:", error.response.data);
       }
     }
+  };
+
+  const handleCancel = () => {
+    setFirstName("");
+    setLastName("");
+    setContactPerson("");
+    setContactNo("");
+    setEmail("");
+    setDateOfBirth("");
+    setClassroom("");
+    setAge(undefined);
+
+    setFirstNameError("");
+    setLastNameError("");
+    setContactPersonError("");
+    setContactNoError("");
+    setEmailError("");
+    setDateOfBirthError("");
+    setClassroomError("");
   };
 
   return (
@@ -213,7 +227,9 @@ const StudentRegistration: React.FC = () => {
             value={contactPerson}
             onChange={(e) => setContactPerson(e.target.value)}
           />
-          {contactPersonError && <div className="error">{contactPersonError}</div>}
+          {contactPersonError && (
+            <div className="error">{contactPersonError}</div>
+          )}
         </FormGroup>
         <FormGroup>
           <Label for="contactNo">Contact No *</Label>
@@ -269,14 +285,30 @@ const StudentRegistration: React.FC = () => {
           >
             <option value="">Select Classroom</option>
             {classrooms.map((classroomOption) => (
-              <option key={classroomOption.classroomId} value={classroomOption.classroomId}>
+              <option
+                key={classroomOption.classroomId}
+                value={classroomOption.classroomId}
+              >
                 {classroomOption.classroomName}
               </option>
             ))}
           </Input>
           {classroomError && <div className="error">{classroomError}</div>}
         </FormGroup>
-        <Button type="submit">Register</Button>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button type="submit" color="primary" style={{ marginBottom: "8px" }}>
+            Register
+          </Button>
+          <Button
+            outline
+            type="button"
+            color="danger"
+            onClick={handleCancel}
+            style={{ marginBottom: "8px" }}
+          >
+            Cancel
+          </Button>
+        </div>
       </Form>
     </div>
   );
