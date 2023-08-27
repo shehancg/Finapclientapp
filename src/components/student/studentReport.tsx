@@ -34,9 +34,7 @@ const StudentReport: React.FC = () => {
     dateOfBirth: "",
   });
   const [students, setStudents] = useState<Student[]>([]);
-  const [teacherAndSubjects, setTeacherAndSubjects] = useState<
-    TeacherAndSubject[]
-  >([]);
+  const [teacherAndSubjects, setTeacherAndSubjects] = useState<TeacherAndSubject[]>([]);
 
   useEffect(() => {
     fetchStudents();
@@ -76,7 +74,7 @@ const StudentReport: React.FC = () => {
   };
 
   return (
-    <div style={{ paddingTop:40, paddingBottom:40 }}>
+    <div style={{ paddingTop: 40, paddingBottom: 40 }}>
       <h2>Student Report</h2>
       <Form>
         {/* Student selection dropdown */}
@@ -160,7 +158,7 @@ const StudentReport: React.FC = () => {
         <tbody>
           {teacherAndSubjects.map((teacherAndSubject, index) => (
             <tr key={index}>
-              <td className="table-success" >{teacherAndSubject.subjectName}</td>
+              <td className="table-success">{teacherAndSubject.subjectName}</td>
               <td className="table-primary">{`${teacherAndSubject.teacherFirstName} ${teacherAndSubject.teacherLastName}`}</td>
             </tr>
           ))}

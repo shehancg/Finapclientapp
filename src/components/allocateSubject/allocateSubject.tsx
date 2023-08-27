@@ -3,16 +3,16 @@ import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api";
 import { Teacher } from "../../interfaces/teacherInterface";
 import { Subject } from "../../interfaces/subjectInterface";
-import { Allocation } from "../../interfaces/subjectallocateinterface";
+import { AllocateSubjectTeacher, AllocationSubject } from "../../interfaces/subjectallocateinterface";
 
 const AllocateSubjects: React.FC = () => {
   // State variables to store allocation details
   const [teacherId, setTeacherId] = useState("");
   const [subjectId, setSubjectId] = useState("");
-  const [allocatedSubjects, setAllocatedSubjects] = useState<Allocation[]>([]);
+  const [allocatedSubjects, setAllocatedSubjects] = useState<AllocationSubject[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [selectedTeacherSubjects, setSelectedTeacherSubjects] = useState<string[]>([]);
+  const [selectedTeacherSubjects, setSelectedTeacherSubjects] = useState<AllocateSubjectTeacher[]>([]);
 
   // Function to fetch teachers and subjects from APIs
   useEffect(() => {
@@ -50,7 +50,7 @@ const AllocateSubjects: React.FC = () => {
   const fetchAllocatedSubjectsForTeacher = async (teacherId: string) => {
     try {
       const response = await api.get(`/api/AllocateSubject/teacher/${teacherId}`);
-      setSelectedTeacherSubjects(response.data.map((subject: any) => subject.subjectName));
+      setSelectedTeacherSubjects(response.data);
     } catch (error) {
       console.error("Error fetching teacher's subjects:", error);
     }
@@ -70,7 +70,7 @@ const AllocateSubjects: React.FC = () => {
     if (teacherId && subjectId) {
       try {
         // Allocate subject to teacher
-        const newAllocation: Allocation = {
+        const newAllocation: AllocationSubject = {
           allocateSubjectId: Date.now(), 
           teacherId: teacherId,
           subjectId: subjectId,
@@ -101,13 +101,18 @@ const AllocateSubjects: React.FC = () => {
 // Function to handle subject allocation deletion
 const handleDelete = async (allocateSubjectId: number) => {
   try {
+    console.log(allocateSubjectId)
     // Make an API call to delete the allocation
     await api.delete(`/api/AllocateSubject/${allocateSubjectId}`);
-
+    // /api/AllocateSubject/{id}
     // Update the allocatedSubjects state after deletion
     const updatedAllocations = allocatedSubjects.filter(
       (allocation) => allocation.allocateSubjectId !== allocateSubjectId
     );
+
+    // Refresh the table with the updated list of allocated subjects
+    fetchAllocatedSubjectsForTeacher(teacherId);
+
     setAllocatedSubjects(updatedAllocations);
   } catch (error) {
     console.error("Error deleting allocation:", error);
@@ -174,13 +179,13 @@ const handleDelete = async (allocateSubjectId: number) => {
             </tr>
           </thead>
           <tbody>
-            {selectedTeacherSubjects.map((subject, index) => (
-              <tr key={index}>
-                <td>{subject}</td>
+            {selectedTeacherSubjects.map((subjectTeacher) => (
+              <tr key={subjectTeacher.allocateSubjectID}>
+                <td>{subjectTeacher.subjectName}</td>
                 <td>
                   <Button
                     color="danger"
-                    onClick={() => handleDelete(allocatedSubjects[index]?.allocateSubjectId)}
+                    onClick={() => handleDelete(subjectTeacher.allocateSubjectID)}
                   >
                     Delete
                   </Button>
