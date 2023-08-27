@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import { Student } from "../../interfaces/studentInterface";
 import { Classroom } from "../../interfaces/classroomInterface";
 
-
 const StudentRegistration: React.FC = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [firstName, setFirstName] = useState("");
@@ -17,6 +16,8 @@ const StudentRegistration: React.FC = () => {
   const [classroom, setClassroom] = useState("");
   const [age, setAge] = useState<number | undefined>(undefined);
   const [allStudents, setAllStudents] = useState<Student[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
 
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
@@ -30,6 +31,21 @@ const StudentRegistration: React.FC = () => {
     fetchClassrooms();
     fetchAllStudents();
   }, []);
+
+  // Function to handle update button click
+  const handleUpdate = (student: Student) => {
+    setIsUpdateMode(true);
+    setSelectedStudent(student);
+    setFirstName(student.firstName);
+    setLastName(student.lastName);
+    setContactPerson(student.contactPerson);
+    setContactNo(student.contactNo);
+    setEmail(student.emailAddress);
+    setDateOfBirth(student.dateOfBirth);
+    //setClassroom(student.classroomId.toString()); // Assuming classroomId is a string
+    setAge(student.age);
+  };
+
 
   const fetchClassrooms = async () => {
     try {
@@ -138,30 +154,58 @@ const StudentRegistration: React.FC = () => {
 
     if (validateForm()) {
       try {
-        const newStudent = {
-          firstName,
-          lastName,
-          contactPerson,
-          contactNo,
-          emailAddress,
-          dateOfBirth,
-          age: calculatedAge,
-          classroomId: parseInt(classroom),
-        };
+        if (selectedStudent) {
+          // Update existing student
+          const updatedStudent = {
+            studentID: selectedStudent.studentID, // Assuming studentID is available
+            firstName,
+            lastName,
+            contactPerson,
+            contactNo,
+            emailAddress,
+            dateOfBirth,
+            age: calculatedAge,
+            classroomId: parseInt(classroom),
+          };
 
-        const response = await api.post("/api/Student", newStudent);
+          const response = await api.put(`/api/Student/${selectedStudent.studentID}`, updatedStudent);
 
-        console.log("Student added:", response.data);
-        
-        // Show a success SweetAlert notification
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Student registered successfully!",
-        });
+          console.log("Student updated:", response.data);
 
-        fetchAllStudents();
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Student updated successfully!",
+          });
 
+          fetchAllStudents();
+        } else {
+          // Register new student
+          const newStudent = {
+            firstName,
+            lastName,
+            contactPerson,
+            contactNo,
+            emailAddress,
+            dateOfBirth,
+            age: calculatedAge,
+            classroomId: parseInt(classroom),
+          };
+
+          const response = await api.post("/api/Student", newStudent);
+
+          console.log("Student added:", response.data);
+
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Student registered successfully!",
+          });
+
+          fetchAllStudents();
+        }
+
+        setSelectedStudent(null);
         setFirstName("");
         setLastName("");
         setContactPerson("");
@@ -179,12 +223,13 @@ const StudentRegistration: React.FC = () => {
         setDateOfBirthError("");
         setClassroomError("");
       } catch (error: any) {
-        console.error("Error adding student:", error.response.data);
+        console.error("Error adding/updating student:", error.response.data);
       }
     }
   };
 
   const handleCancel = () => {
+    setIsUpdateMode(false);
     setFirstName("");
     setLastName("");
     setContactPerson("");
@@ -203,9 +248,27 @@ const StudentRegistration: React.FC = () => {
     setClassroomError("");
   };
 
+  const handleDelete = async (studentID: number) => {
+    try {
+      await api.delete(`/api/Student/${studentID}`);
+
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Student deleted successfully!",
+      });
+
+      fetchAllStudents();
+    } catch (error: any) {
+      console.error("Error deleting student:", error.response.data);
+    }
+  };
+
   return (
-    <div style={{ paddingTop:40, paddingBottom:40 }}>
-      <h2 style={{ textAlign:"center", paddingBottom:10 }}>Student Registration</h2>
+    <div style={{ paddingTop: 40, paddingBottom: 40 }}>
+      <h2 style={{ textAlign: "center", paddingBottom: 10 }}>
+        Student Registration
+      </h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
           <Label for="firstName">First Name *</Label>
@@ -307,8 +370,12 @@ const StudentRegistration: React.FC = () => {
           {classroomError && <div className="error">{classroomError}</div>}
         </FormGroup>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Button type="submit" color="primary" style={{ marginBottom: "8px" }}>
-            Register
+          <Button
+            type="submit"
+            color={isUpdateMode ? "success" : "primary"}
+            style={{ marginBottom: "8px" }}
+          >
+            {isUpdateMode ? "Update" : "Register"}
           </Button>
           <Button
             outline
@@ -323,29 +390,58 @@ const StudentRegistration: React.FC = () => {
       </Form>
       <br></br>
       <Table striped>
-          <thead>
-            <tr>
-              <th>Student ID</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Contact Person</th>
-              <th>Contact Number</th>
-              <th>DoB</th>
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Contact Person</th>
+            <th>Contact Number</th>
+            <th>DoB</th>
+          </tr>
+        </thead>
+        <tbody>
+          {allStudents.map((student) => (
+            <tr key={student.studentID}>
+              <td>{student.studentID}</td>
+              <td>{student.firstName}</td>
+              <td>{student.lastName}</td>
+              <td>{student.contactPerson}</td>
+              <td>{student.contactNo}</td>
+              <td>{new Date(student.dateOfBirth).toLocaleDateString()}</td>
+              <td>
+                <Button
+                  color="info"
+                  onClick={() => handleUpdate(student)}
+                >
+                  Update
+                </Button>
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Delete Student?",
+                      text: "Are you sure you want to delete this student?",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#d33",
+                      cancelButtonColor: "#3085d6",
+                      confirmButtonText: "Yes, delete it!",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handleDelete(student.studentID);
+                      }
+                    });
+                  }}
+                  style={{ marginLeft: "8px" }}
+                >
+                  Delete
+                </Button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {allStudents.map((student) => (
-              <tr key={student.studentID}>
-                <td>{student.studentID}</td>
-                <td>{student.firstName}</td>
-                <td>{student.lastName}</td>
-                <td>{student.contactPerson}</td>
-                <td>{student.contactNo}</td>
-                <td>{new Date(student.dateOfBirth).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };

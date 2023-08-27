@@ -5,7 +5,9 @@ export interface Student {
     lastName: string;
     contactPerson:string;
     contactNo: string;
+    classroomId: string;
     classroomName: string;
     emailAddress: string;
     dateOfBirth: string;
+    age: number;
   }
