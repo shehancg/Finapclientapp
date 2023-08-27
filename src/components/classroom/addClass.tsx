@@ -16,6 +16,8 @@ const Classrooms: React.FC = () => {
 
   const [allClassrooms, setAllClassrooms] = useState<Classroom[]>([]);
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   useEffect(() => {
     fetchAllClassrooms();
   }, []);
@@ -76,8 +78,35 @@ const Classrooms: React.FC = () => {
 
         setClassroomNameError("");
       } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: 'Class already exists',
+        });
         console.error("Error adding classroom:", error);
       }
+    }
+  };
+
+  const handleDelete = async (classroomId: number) => {
+    try {
+      const response = await api.delete(`/api/classrooms/${classroomId}`);
+      if (response.status === 200 || 202) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Classroom deleted successfully!',
+        });
+        fetchAllClassrooms();
+      }
+    } catch (error: any) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Failed',
+        text: 'Cant delete classroom with student',
+      });
+      console.error('Error deleting classroom:', error);
+      setErrorMessage(error);
     }
   };
 
@@ -110,7 +139,6 @@ const Classrooms: React.FC = () => {
           <tr>
             <th>Classroom ID</th>
             <th>Classroom Name</th>
-            {/* ... (Other table headers) */}
           </tr>
         </thead>
         <tbody>
@@ -118,11 +146,33 @@ const Classrooms: React.FC = () => {
             <tr key={classroom.classroomId}>
               <td>{classroom.classroomId}</td>
               <td>{classroom.classroomName}</td>
-              {/* ... (Other table cells) */}
+              <td>
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Delete Classroom?",
+                      text: "Are you sure you want to delete this classroom?",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#d33",
+                      cancelButtonColor: "#3085d6",
+                      confirmButtonText: "Yes, delete it!",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handleDelete(classroom.classroomId);
+                      }
+                    });
+                  }}
+                >
+                  Delete
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      {/* {errorMessage && <div className="error">{errorMessage}</div>} */}
     </div>
   );
 };
