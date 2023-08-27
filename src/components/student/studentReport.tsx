@@ -76,7 +76,7 @@ const StudentReport: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop:40, paddingBottom:40 }}>
       <h2>Student Report</h2>
       <Form>
         {/* Student selection dropdown */}

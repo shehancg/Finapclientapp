@@ -44,8 +44,8 @@ const HomePage: React.FC = () => {
 
   return (
     <HomePageLayout>
-      <CustomNavbar />
-      <div className="container">
+      <CustomNavbar></CustomNavbar>
+      <div className="container" style={{ paddingTop:40}}>
         <div className="d-flex flex-column align-items-center">
           {listItems.map((item, index) => (
             <div key={index} className="col-md-4 mb-4">

@@ -204,8 +204,8 @@ const StudentRegistration: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Student Registration</h2>
+    <div style={{ paddingTop:40, paddingBottom:40 }}>
+      <h2 style={{ textAlign:"center", paddingBottom:10 }}>Student Registration</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
           <Label for="firstName">First Name *</Label>

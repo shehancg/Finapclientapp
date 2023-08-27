@@ -82,7 +82,7 @@ const Classrooms: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop:40, paddingBottom:40 }}>
       <h2>Classrooms</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
@@ -105,7 +105,7 @@ const Classrooms: React.FC = () => {
         </div>
       </Form>
       <br></br>
-      <Table bordered>
+      <Table striped>
         <thead>
           <tr>
             <th>Classroom ID</th>

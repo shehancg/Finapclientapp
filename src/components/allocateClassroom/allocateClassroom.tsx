@@ -94,7 +94,6 @@ const AllocateClassrooms: React.FC = () => {
         // Refresh the table with the updated list of allocated classrooms
         fetchAllocatedClassroomsForTeacher(teacherId);
 
-        setTeacherId("");
         setClassroomId("");
       } catch (error) {
         console.error("Error allocating classroom:", error);
@@ -122,7 +121,7 @@ const AllocateClassrooms: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop:40, paddingBottom:40 }}>
       <h2>Allocate Classrooms</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
@@ -139,7 +138,7 @@ const AllocateClassrooms: React.FC = () => {
           >
             <option value="">Select Teacher</option>
             {teachers.map((teacherOption) => (
-              <option key={teacherOption.teacherID} value={teacherOption.teacherID}>
+              <option key={teacherOption.teacherID} value={teacherOption.teacherID} className="colored-option">
                 {teacherOption.firstName}
               </option>
             ))}
@@ -162,12 +161,16 @@ const AllocateClassrooms: React.FC = () => {
             ))}
           </Input>
         </FormGroup>
-        <Button type="submit">Allocate</Button>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button type="submit" color="primary" style={{ marginBottom: "8px" }}>
+            Allocate Classroom
+          </Button>
+        </div>
       </Form>
 
       <div className="mt-4">
         <h3>Allocated Classrooms</h3>
-        <Table>
+        <Table striped>
           <thead>
             <tr>
               <th>Classroom</th>

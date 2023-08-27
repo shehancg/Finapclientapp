@@ -77,7 +77,7 @@ const SubjectRegistration: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop:40, paddingBottom:40 }}>
       <h2>Subject Registration</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
@@ -98,7 +98,7 @@ const SubjectRegistration: React.FC = () => {
         </div>
       </Form>
       <br></br>
-      <Table bordered>
+      <Table striped>
         <thead>
           <tr>
             <th>Subject ID</th>

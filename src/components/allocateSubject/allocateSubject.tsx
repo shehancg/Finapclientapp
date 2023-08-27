@@ -94,7 +94,6 @@ const AllocateSubjects: React.FC = () => {
         // Refresh the table with the updated list of allocated subjects
         fetchAllocatedSubjectsForTeacher(teacherId);
 
-        setTeacherId("");
         setSubjectId("");
       } catch (error) {
         console.error("Error allocating subject:", error);
@@ -122,7 +121,7 @@ const handleDelete = async (allocateSubjectId: number) => {
 };
 
   return (
-    <div>
+    <div style={{ paddingTop:40, paddingBottom:40 }}>
       <h2>Allocate Subjects</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
@@ -164,12 +163,16 @@ const handleDelete = async (allocateSubjectId: number) => {
             ))}
           </Input>
         </FormGroup>
-        <Button type="submit">Allocate</Button>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button type="submit" color="primary" style={{ marginBottom: "8px" }}>
+            Allocate Subject
+          </Button>
+        </div>
       </Form>
 
       <div className="mt-4">
         <h3>Allocated Subjects</h3>
-        <Table>
+        <Table striped>
           <thead>
             <tr>
               <th>Subject</th>
