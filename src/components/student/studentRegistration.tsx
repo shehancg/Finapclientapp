@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { FormGroup, Label, Input, Form, Button } from "reactstrap";
+import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api";
 import Swal from "sweetalert2";
 
 interface Classroom {
   classroomId: number;
   classroomName: string;
+}
+
+interface Student{
+  studentID: number;
+  firstName: string;
+  lastName: string;
+  contactPerson: string;
+  contactNo: string;
+  classroomName: string;
+  emailAddress: string;
+  dateOfBirth: string;
 }
 
 const StudentRegistration: React.FC = () => {
@@ -18,6 +29,7 @@ const StudentRegistration: React.FC = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [classroom, setClassroom] = useState("");
   const [age, setAge] = useState<number | undefined>(undefined);
+  const [allStudents, setAllStudents] = useState<Student[]>([]);
 
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
@@ -29,6 +41,7 @@ const StudentRegistration: React.FC = () => {
 
   useEffect(() => {
     fetchClassrooms();
+    fetchAllStudents();
   }, []);
 
   const fetchClassrooms = async () => {
@@ -37,6 +50,15 @@ const StudentRegistration: React.FC = () => {
       setClassrooms(response.data);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
+    }
+  };
+
+  const fetchAllStudents = async () => {
+    try {
+      const response = await api.get("/api/student");
+      setAllStudents(response.data);
+    } catch (error) {
+      console.error("Error fetching all students:", error);
     }
   };
 
@@ -310,6 +332,31 @@ const StudentRegistration: React.FC = () => {
           </Button>
         </div>
       </Form>
+      <br></br>
+      <Table striped>
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Contact Person</th>
+              <th>Contact Number</th>
+              <th>DoB</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allStudents.map((student) => (
+              <tr key={student.studentID}>
+                <td>{student.studentID}</td>
+                <td>{student.firstName}</td>
+                <td>{student.lastName}</td>
+                <td>{student.contactPerson}</td>
+                <td>{student.contactNo}</td>
+                <td>{new Date(student.dateOfBirth).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
     </div>
   );
 };
