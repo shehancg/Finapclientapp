@@ -3,7 +3,7 @@ import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api";
 import { Teacher } from "../../interfaces/teacherInterface";
 import { Classroom } from "../../interfaces/classroomInterface";
-import { AllocateClassroom } from "../../interfaces/classallocateinterface";
+import { AllocateClassTeacher, AllocateClassroom } from "../../interfaces/classallocateinterface";
 
 const AllocateClassrooms: React.FC = () => {
   // State variables to store allocation details
@@ -12,7 +12,7 @@ const AllocateClassrooms: React.FC = () => {
   const [allocatedClassrooms, setAllocatedClassrooms] = useState<AllocateClassroom[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [selectedTeacherClassrooms, setSelectedTeacherClassrooms] = useState<string[]>([]);
+  const [selectedTeacherClassrooms, setSelectedTeacherClassrooms] = useState<AllocateClassTeacher[]>([]);
 
   // Function to fetch teachers and classrooms from APIs
   useEffect(() => {
@@ -50,7 +50,7 @@ const AllocateClassrooms: React.FC = () => {
   const fetchAllocatedClassroomsForTeacher = async (teacherId: string) => {
     try {
       const response = await api.get(`/api/AllocateClassroom/teacher/${teacherId}`);
-      setSelectedTeacherClassrooms(response.data.map((classroom: any) => classroom.classroomName));
+      setSelectedTeacherClassrooms(response.data);
     } catch (error) {
       console.error("Error fetching teacher's classrooms:", error);
     }
@@ -101,6 +101,7 @@ const AllocateClassrooms: React.FC = () => {
   // Function to handle classroom allocation deletion
   const handleDelete = async (allocateClassroomId: number) => {
     try {
+      console.log(allocateClassroomId)
       // Make an API call to delete the allocation
       await api.delete(`/api/AllocateClassroom/${allocateClassroomId}`);
 
@@ -109,6 +110,9 @@ const AllocateClassrooms: React.FC = () => {
         (allocation) => allocation.allocateClassroomId !== allocateClassroomId
       );
       setAllocatedClassrooms(updatedAllocations);
+
+      // Refresh the table with the updated list of allocated classrooms
+      fetchAllocatedClassroomsForTeacher(teacherId);
     } catch (error) {
       console.error("Error deleting allocation:", error);
     }
@@ -172,13 +176,13 @@ const AllocateClassrooms: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {selectedTeacherClassrooms.map((classroom, index) => (
-              <tr key={index}>
-                <td>{classroom}</td>
+            {selectedTeacherClassrooms.map((classroom) => (
+              <tr key={classroom.allocateClassroomID}>
+                <td>{classroom.classroomName}</td>
                 <td>
                   <Button
                     color="danger"
-                    onClick={() => handleDelete(allocatedClassrooms[index]?.allocateClassroomId)}
+                    onClick={() => handleDelete(classroom.allocateClassroomID)}
                   >
                     Delete
                   </Button>
