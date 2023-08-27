@@ -3,13 +3,7 @@ import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api";
 import { Teacher } from "../../interfaces/teacherInterface";
 import { Classroom } from "../../interfaces/classroomInterface";
-
-// Interface for the allocation object
-interface AllocateClassroom {
-  allocateClassroomId: number;
-  teacherId: number;
-  classroomId: number;
-}
+import { AllocateClassroom } from "../../interfaces/classallocateinterface";
 
 const AllocateClassrooms: React.FC = () => {
   // State variables to store allocation details
