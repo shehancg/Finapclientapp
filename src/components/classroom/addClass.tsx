@@ -1,12 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { FormGroup, Label, Input, Form, Button } from "reactstrap";
+import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api"; // Import the Axios instance from api.ts
-
-interface Classroom {
-  classroomName: string;
-}
+import Swal from "sweetalert2";
+import { Classroom } from "../../interfaces/classroomInterface";
 
 const Classrooms: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,6 +13,21 @@ const Classrooms: React.FC = () => {
   const [classroomName, setClassroomName] = useState("");
 
   const [classroomNameError, setClassroomNameError] = useState("");
+
+  const [allClassrooms, setAllClassrooms] = useState<Classroom[]>([]);
+
+  useEffect(() => {
+    fetchAllClassrooms();
+  }, []);
+
+  const fetchAllClassrooms = async () => {
+    try {
+      const response = await api.get("/api/classrooms");
+      setAllClassrooms(response.data);
+    } catch (error) {
+      console.error("Error fetching all classrooms:", error);
+    }
+  };
 
   // Function to validate the form before submission
   const validateForm = () => {
@@ -40,6 +53,7 @@ const Classrooms: React.FC = () => {
       // Dispatch an action to add classroom data to the Redux store
       const newClassroom: Classroom = {
         classroomName,
+        classroomId: 0,
       };
       try {
         // Send the data to the API
@@ -48,14 +62,20 @@ const Classrooms: React.FC = () => {
         // Handle the response from the API (if needed)
         console.log("Classroom added successfully:", response.data);
 
+        // Show a success SweetAlert notification
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Classroom added successfully!",
+        });
+
+        fetchAllClassrooms();
+
         // Clear the form after successful submission (if needed)
         setClassroomName("");
 
-        setClassroomNameError("")
-
-        
+        setClassroomNameError("");
       } catch (error) {
-        
         console.error("Error adding classroom:", error);
       }
     }
@@ -74,10 +94,35 @@ const Classrooms: React.FC = () => {
             value={classroomName}
             onChange={(e) => setClassroomName(e.target.value)}
           />
-          {classroomNameError && <div className="error">{classroomNameError}</div>}
+          {classroomNameError && (
+            <div className="error">{classroomNameError}</div>
+          )}
         </FormGroup>
-        <Button type="submit">Add Classroom</Button>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button type="submit" color="primary" style={{ marginBottom: "8px" }}>
+            Add Classroom
+          </Button>
+        </div>
       </Form>
+      <br></br>
+      <Table bordered>
+        <thead>
+          <tr>
+            <th>Classroom ID</th>
+            <th>Classroom Name</th>
+            {/* ... (Other table headers) */}
+          </tr>
+        </thead>
+        <tbody>
+          {allClassrooms.map((classroom) => (
+            <tr key={classroom.classroomId}>
+              <td>{classroom.classroomId}</td>
+              <td>{classroom.classroomName}</td>
+              {/* ... (Other table cells) */}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };

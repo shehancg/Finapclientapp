@@ -2,22 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api";
 import Swal from "sweetalert2";
+import { Student } from "../../interfaces/studentInterface";
+import { Classroom } from "../../interfaces/classroomInterface";
 
-interface Classroom {
-  classroomId: number;
-  classroomName: string;
-}
-
-interface Student{
-  studentID: number;
-  firstName: string;
-  lastName: string;
-  contactPerson: string;
-  contactNo: string;
-  classroomName: string;
-  emailAddress: string;
-  dateOfBirth: string;
-}
 
 const StudentRegistration: React.FC = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
@@ -172,6 +159,8 @@ const StudentRegistration: React.FC = () => {
           title: "Success",
           text: "Student registered successfully!",
         });
+
+        fetchAllStudents();
 
         setFirstName("");
         setLastName("");

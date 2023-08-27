@@ -1,27 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api";
+import { Teacher } from "../../interfaces/teacherInterface";
+import { Classroom } from "../../interfaces/classroomInterface";
 
 // Interface for the allocation object
 interface AllocateClassroom {
   allocateClassroomId: number;
   teacherId: number;
   classroomId: number;
-}
-
-interface Teacher {
-  teacherID: number;
-  firstName: string;
-  lastName: string;
-  contactNo: string;
-  emailAddress: string;
-  allocatedSubjects: any[];
-  allocateClassrooms: any[];
-}
-
-interface Classroom {
-  classroomId: number;
-  classroomName: string;
 }
 
 const AllocateClassrooms: React.FC = () => {
