@@ -4,6 +4,7 @@ import api from "../../api";
 import { Teacher } from "../../interfaces/teacherInterface";
 import { Subject } from "../../interfaces/subjectInterface";
 import { AllocateSubjectTeacher, AllocationSubject } from "../../interfaces/subjectallocateinterface";
+import Swal from "sweetalert2";
 
 const AllocateSubjects: React.FC = () => {
   // State variables to store allocation details
@@ -89,7 +90,21 @@ const AllocateSubjects: React.FC = () => {
         fetchAllocatedSubjectsForTeacher(teacherId);
 
         setSubjectId("");
+
+        // Show a success Swal notification
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Subject allocated successfully!",
+        });
       } catch (error) {
+        // Handle the error using Swal
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Subject already allocated to teacher",
+        });
+
         console.error("Error allocating subject:", error);
       }
     } else {

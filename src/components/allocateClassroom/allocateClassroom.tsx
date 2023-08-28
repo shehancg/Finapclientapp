@@ -3,16 +3,24 @@ import { FormGroup, Label, Input, Form, Button, Table } from "reactstrap";
 import api from "../../api";
 import { Teacher } from "../../interfaces/teacherInterface";
 import { Classroom } from "../../interfaces/classroomInterface";
-import { AllocateClassTeacher, AllocateClassroom } from "../../interfaces/classallocateinterface";
+import {
+  AllocateClassTeacher,
+  AllocateClassroom,
+} from "../../interfaces/classallocateinterface";
+import Swal from "sweetalert2";
 
 const AllocateClassrooms: React.FC = () => {
   // State variables to store allocation details
   const [teacherId, setTeacherId] = useState("");
   const [classroomId, setClassroomId] = useState("");
-  const [allocatedClassrooms, setAllocatedClassrooms] = useState<AllocateClassroom[]>([]);
+  const [allocatedClassrooms, setAllocatedClassrooms] = useState<
+    AllocateClassroom[]
+  >([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [selectedTeacherClassrooms, setSelectedTeacherClassrooms] = useState<AllocateClassTeacher[]>([]);
+  const [selectedTeacherClassrooms, setSelectedTeacherClassrooms] = useState<
+    AllocateClassTeacher[]
+  >([]);
 
   // Function to fetch teachers and classrooms from APIs
   useEffect(() => {
@@ -49,7 +57,9 @@ const AllocateClassrooms: React.FC = () => {
   // Function to fetch allocated classrooms for the selected teacher
   const fetchAllocatedClassroomsForTeacher = async (teacherId: string) => {
     try {
-      const response = await api.get(`/api/AllocateClassroom/teacher/${teacherId}`);
+      const response = await api.get(
+        `/api/AllocateClassroom/teacher/${teacherId}`
+      );
       setSelectedTeacherClassrooms(response.data);
     } catch (error) {
       console.error("Error fetching teacher's classrooms:", error);
@@ -58,7 +68,9 @@ const AllocateClassrooms: React.FC = () => {
 
   // Function to get the classroom name from classroomId
   const getClassroomNameById = (classroomId: string) => {
-    const classroom = classrooms.find((classroom) => classroom.classroomId === Number(classroomId));
+    const classroom = classrooms.find(
+      (classroom) => classroom.classroomId === Number(classroomId)
+    );
     return classroom ? classroom.classroomName : "";
   };
 
@@ -71,16 +83,16 @@ const AllocateClassrooms: React.FC = () => {
       try {
         // Allocate classroom to teacher
         const newAllocation: AllocateClassroom = {
-          allocateClassroomId: Date.now(), 
+          allocateClassroomId: Date.now(),
           teacherId: Number(teacherId),
           classroomId: Number(classroomId),
         };
 
         // Make an API call to save the allocation
         await api.post("/api/AllocateClassroom", {
-            teacherId: Number(newAllocation.teacherId),
-            classroomId: Number(newAllocation.classroomId),
-          });
+          teacherId: Number(newAllocation.teacherId),
+          classroomId: Number(newAllocation.classroomId),
+        });
 
         // Update the allocatedClassrooms state with the new allocation
         setAllocatedClassrooms([...allocatedClassrooms, newAllocation]);
@@ -89,7 +101,21 @@ const AllocateClassrooms: React.FC = () => {
         fetchAllocatedClassroomsForTeacher(teacherId);
 
         setClassroomId("");
+
+        // Show a success Swal notification
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Classroom allocated successfully!",
+        });
       } catch (error) {
+        // Handle the error using Swal
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Class already allocated for teacher",
+        });
+
         console.error("Error allocating classroom:", error);
       }
     } else {
@@ -101,7 +127,7 @@ const AllocateClassrooms: React.FC = () => {
   // Function to handle classroom allocation deletion
   const handleDelete = async (allocateClassroomId: number) => {
     try {
-      console.log(allocateClassroomId)
+      console.log(allocateClassroomId);
       // Make an API call to delete the allocation
       await api.delete(`/api/AllocateClassroom/${allocateClassroomId}`);
 
@@ -119,7 +145,7 @@ const AllocateClassrooms: React.FC = () => {
   };
 
   return (
-    <div style={{ paddingTop:40, paddingBottom:40 }}>
+    <div style={{ paddingTop: 40, paddingBottom: 40 }}>
       <h2>Allocate Classrooms</h2>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
@@ -136,7 +162,11 @@ const AllocateClassrooms: React.FC = () => {
           >
             <option value="">Select Teacher</option>
             {teachers.map((teacherOption) => (
-              <option key={teacherOption.teacherID} value={teacherOption.teacherID} className="colored-option">
+              <option
+                key={teacherOption.teacherID}
+                value={teacherOption.teacherID}
+                className="colored-option"
+              >
                 {teacherOption.firstName}
               </option>
             ))}
@@ -153,7 +183,10 @@ const AllocateClassrooms: React.FC = () => {
           >
             <option value="">Select Classroom</option>
             {classrooms.map((classroomOption) => (
-              <option key={classroomOption.classroomId} value={classroomOption.classroomId}>
+              <option
+                key={classroomOption.classroomId}
+                value={classroomOption.classroomId}
+              >
                 {classroomOption.classroomName}
               </option>
             ))}

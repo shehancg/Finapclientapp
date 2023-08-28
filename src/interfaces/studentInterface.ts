@@ -5,7 +5,7 @@ export interface Student {
     lastName: string;
     contactPerson:string;
     contactNo: string;
-    classroomId: string;
+    classroomID: string;
     classroomName: string;
     emailAddress: string;
     dateOfBirth: string;

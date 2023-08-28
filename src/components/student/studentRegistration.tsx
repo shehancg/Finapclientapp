@@ -42,7 +42,7 @@ const StudentRegistration: React.FC = () => {
     setContactNo(student.contactNo);
     setEmail(student.emailAddress);
     setDateOfBirth(student.dateOfBirth);
-    //setClassroom(student.classroomId.toString()); // Assuming classroomId is a string
+    setClassroom(student.classroomID); // Assuming classroomId is a string
     setAge(student.age);
   };
 
