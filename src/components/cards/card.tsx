@@ -7,18 +7,17 @@ import { Link } from "react-router-dom";
 
 interface CustomCardProps {
   title: string;
-  imageSrc: string;
   linkTo: string; 
+  color: string;
 }
 
-const CustomCard: React.FC<CustomCardProps> = ({ title, imageSrc, linkTo }) => {
+const CustomCard: React.FC<CustomCardProps> = ({ title, color , linkTo }) => {
   return (
-    <Card className="custom-card">
+    <Card className="custom-card" style={{ backgroundColor: color }}>
       <Link to={linkTo}>
         <div className="d-flex">
-          <CardImg className="custom-card-image" src={imageSrc} alt="Card image cap" />
           <CardBody className="flex-grow-1">
-            <CardTitle>{title}</CardTitle>
+            <CardTitle style={{ color:"white", fontSize:"larger", alignSelf:"center"}}>{title}</CardTitle>
           </CardBody>
         </div>
       </Link>
