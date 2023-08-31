@@ -42,10 +42,9 @@ const StudentRegistration: React.FC = () => {
     setContactNo(student.contactNo);
     setEmail(student.emailAddress);
     setDateOfBirth(student.dateOfBirth);
-    setClassroom(student.classroomID); // Assuming classroomId is a string
+    setClassroom(student.classroomID.toString()); // Assuming classroomId is a string
     setAge(student.age);
   };
-
 
   const fetchClassrooms = async () => {
     try {
@@ -165,10 +164,13 @@ const StudentRegistration: React.FC = () => {
             emailAddress,
             dateOfBirth,
             age: calculatedAge,
-            classroomId: parseInt(classroom),
+            classroomID: parseInt(classroom),
           };
 
-          const response = await api.put(`/api/Student/${selectedStudent.studentID}`, updatedStudent);
+          const response = await api.put(
+            `/api/Student/${selectedStudent.studentID}`,
+            updatedStudent
+          );
 
           console.log("Student updated:", response.data);
 
@@ -189,7 +191,7 @@ const StudentRegistration: React.FC = () => {
             emailAddress,
             dateOfBirth,
             age: calculatedAge,
-            classroomId: parseInt(classroom),
+            classroomID: parseInt(classroom),
           };
 
           const response = await api.post("/api/Student", newStudent);
@@ -355,13 +357,13 @@ const StudentRegistration: React.FC = () => {
             name="classroom"
             id="classroom"
             value={classroom}
-            onChange={(e) => setClassroom(e.target.value)}
+            onChange={(e) => setClassroom(e.target.value)} // Update the classroom state here
           >
             <option value="">Select Classroom</option>
             {classrooms.map((classroomOption) => (
               <option
                 key={classroomOption.classroomId}
-                value={classroomOption.classroomId}
+                value={classroomOption.classroomId.toString()} // Convert to string
               >
                 {classroomOption.classroomName}
               </option>
@@ -369,6 +371,7 @@ const StudentRegistration: React.FC = () => {
           </Input>
           {classroomError && <div className="error">{classroomError}</div>}
         </FormGroup>
+
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Button
             type="submit"
@@ -410,10 +413,7 @@ const StudentRegistration: React.FC = () => {
               <td>{student.contactNo}</td>
               <td>{new Date(student.dateOfBirth).toLocaleDateString()}</td>
               <td>
-                <Button
-                  color="info"
-                  onClick={() => handleUpdate(student)}
-                >
+                <Button color="info" onClick={() => handleUpdate(student)}>
                   Update
                 </Button>
                 <Button
