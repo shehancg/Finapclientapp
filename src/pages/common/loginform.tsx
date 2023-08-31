@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Alert } from "reactstrap";
 import api from "../../api";
 import CustomNavbar from "../../components/navbar/navbar";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,6 +19,12 @@ const Login = () => {
       });
 
       if (response.data && response.data.token) {
+        Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Granted",
+          });
+  
         // Redirect to protected route
         navigate("/home");
       }
@@ -27,7 +34,7 @@ const Login = () => {
   };
 
   return (
-    <><CustomNavbar></CustomNavbar><Container>
+    <><CustomNavbar></CustomNavbar><Container style={{ paddingTop:40, paddingBottom:40 }}>
           <Row className="justify-content-center">
               <Col md={6}>
                   <h2>Login</h2>
@@ -52,6 +59,7 @@ const Login = () => {
                           Login
                       </Button>
                   </Form>
+                  <br></br>
                   {error && <Alert color="danger">{error}</Alert>}
               </Col>
           </Row>
