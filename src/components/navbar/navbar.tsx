@@ -8,7 +8,7 @@ const CustomNavbar = () => {
       <NavbarBrand href="/">School Managment System</NavbarBrand>
       <Nav className="ml-auto" navbar>
         <NavItem>
-          <NavLink href="/">Home</NavLink>
+          <NavLink href="/home">Home</NavLink>
         </NavItem>
       </Nav>
     </Navbar>
