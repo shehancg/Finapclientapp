@@ -71,7 +71,7 @@ const TeacherRegistration: React.FC = () => {
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     // Check if the form is valid before submitting
     if (validateForm()) {
       // Perform further actions like saving teacher details to the database
@@ -81,40 +81,46 @@ const TeacherRegistration: React.FC = () => {
         contactNo,
         emailAddress,
       };
-
+  
       try {
         // Send the teacher data to the API using axios
         const response = await api.post("/api/Teacher", teacherData);
-
+  
         // Handle the API response here if needed
         console.log("Teacher added:", response.data);
-
+  
         // Show a success SweetAlert notification
         Swal.fire({
           icon: "success",
           title: "Success",
           text: "Teacher registered successfully!",
         });
-
-        fetchTeachers()
-
+  
+        fetchTeachers();
+  
         // Clear the form fields after successful submission
         setFirstName("");
         setLastName("");
         setContactNo("");
         setEmail("");
-
+  
         // Clear error messages
-        setFirstNameError("");
         setFirstNameError("");
         setContactNoError("");
         setEmailError("");
       } catch (error: any) {
-        // Handle any errors that occurred during the API call
-        console.error("Error adding teacher:", error.response.data);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "A teacher with the same ContactNo already exists.",
+          });
+          // Handle other errors
+          //console.error("Error adding teacher:", error.response.data);
+        
       }
     }
   };
+  
 
   const handleCancel = () => {
     // Clear the form fields
